@@ -1,5 +1,6 @@
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/7b157f4a-de72-49f3-a428-7dc77a8d96bf" alt="StockSync Logo" width="300"/>
+  <img src="<img width="457" height="394" alt="imagen (3)" src="https://github.com/user-attachments/assets/a523aba1-f2ff-4ad9-b239-ad0fe8e883ef" />
+" alt="StockSync Logo" width="300"/>
 
   # StockSync
   *Inventario sin errores, negocio sin límites.*
