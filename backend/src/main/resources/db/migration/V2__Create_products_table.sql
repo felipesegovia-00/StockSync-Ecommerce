@@ -1,6 +1,8 @@
+DROP TABLE IF EXISTS products CASCADE;
+
 -- Tabla para almacenar productos
 CREATE TABLE products (
-id SERIAL PRIMARY KEY, -- Identificador único autoincremental
+id BIGSERIAL PRIMARY KEY, -- Identificador único autoincremental
 name VARCHAR(200) NOT NULL, -- Nombre del producto (obligatorio)
 description TEXT, -- Descripción opcional del producto
 price DECIMAL(10, 2) NOT NULL CHECK (price >= 0),
@@ -13,7 +15,7 @@ image_url VARCHAR(500),
 -- URL de la imagen del producto (opcional)
 active BOOLEAN NOT NULL DEFAULT TRUE,
 -- Indica si el producto está activo o disponible
-category_id INTEGER NOT NULL,
+category_id BIGINT NOT NULL,
 -- Referencia a la categoría del producto (obligatoria)
 created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 -- Fecha de creación automática
