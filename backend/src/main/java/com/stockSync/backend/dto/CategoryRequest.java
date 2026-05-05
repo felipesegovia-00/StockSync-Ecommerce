@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 public class CategoryRequest {
     @NotBlank(message = "El nombre de la categoria no puede estar vacio")
     private String name;
-
     private String description;
 }
 //Notas :
