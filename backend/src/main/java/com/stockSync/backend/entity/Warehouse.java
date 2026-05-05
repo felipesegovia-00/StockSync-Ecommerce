@@ -1,11 +1,18 @@
 package com.stockSync.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.persistence.*;
+import lombok.Data;
+
+
 import java.time.LocalDate;
 
+@Data
 @Entity
 @Table(name = "warehouse")
+@JsonPropertyOrder({ "id", "code", "name", "address", "city", "createAt" })
 public class Warehouse {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,7 +21,7 @@ public class Warehouse {
     @Column(nullable = false, unique = true, length = 20)
     private String code;
 
-    @Column(nullable = false,length = 100)
+    @Column(nullable = false, length = 100)
     private String name;
 
     @Column(length = 200)
@@ -27,70 +34,8 @@ public class Warehouse {
     private LocalDate createAt;
 
     @PrePersist
-    public  void prePersist(){
+    public void prePersist() {
         this.createAt = LocalDate.now();
     }
 
-    // Constructor
-    public Warehouse(Long id, String code, String name, String address, String city, LocalDate createAt) {
-        this.id = id;
-        this.code = code;
-        this.name = name;
-        this.address = address;
-        this.city = city;
-        this.createAt = createAt;
-    }
-
-    // Constructor (empty)
-    public Warehouse() {
-    }
-
-    // Getter and Setter
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public LocalDate getCreateAt() {
-        return createAt;
-    }
-
-    public void setCreateAt(LocalDate createAt) {
-        this.createAt = createAt;
-    }
 }
