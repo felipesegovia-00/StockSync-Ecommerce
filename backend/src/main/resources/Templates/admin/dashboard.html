@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Panel de administración de StockSync.">
+    <link rel="stylesheet" th:href="@{/css/normalize.css}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <title>Admin Dashboard - StockSync</title>
+</head>
+<body class="admin-body">
+
+    <aside th:replace="~{fragments/admin-sidebar :: sidebar(seccionActiva='dashboard')}"></aside>
+
+    <main class="admin-main">
+        <header th:replace="~{fragments/admin-sidebar :: topbar(titulo='Admin Dashboard', subtitulo='Administrador de inventario y bodega')}"></header>
+
+        <div class="admin-content">
+            <!-- Summary Cards -->
+            <div class="admin-cards">
+                <div class="admin-stat-card admin-stat-card--orange">
+                    <span class="admin-stat-card__label admin-stat-card__label--orange">Productos</span>
+                    <p class="admin-stat-card__number" th:text="${totalProductos}">0</p>
+                    <p class="admin-stat-card__sub">en el sistema</p>
+                </div>
+                <div class="admin-stat-card admin-stat-card--blue">
+                    <span class="admin-stat-card__label admin-stat-card__label--blue">Bodegas</span>
+                    <p class="admin-stat-card__number" th:text="${totalBodegas}">0</p>
+                    <p class="admin-stat-card__sub">activas</p>
+                </div>
+                <div class="admin-stat-card admin-stat-card--green">
+                    <span class="admin-stat-card__label admin-stat-card__label--green">Stock</span>
+                    <p class="admin-stat-card__number" th:text="${totalStock}">0</p>
+                    <p class="admin-stat-card__sub">registros</p>
+                </div>
+            </div>
+
+            <!-- Quick Access -->
+            <div class="admin-panel">
+                <div class="admin-panel__header">
+                    <h2 class="admin-panel__title">Acceso Rápido</h2>
+                </div>
+                <div class="admin-panel__body">
+                    <div class="admin-quick-grid">
+                        <a th:href="@{/admin/productos/nuevo}" class="admin-quick-card">
+                            <span class="admin-quick-card__icon">📦</span>
+                            <span class="admin-quick-card__text">Nuevo Producto</span>
+                        </a>
+                        <a th:href="@{/admin/bodegas/nuevo}" class="admin-quick-card">
+                            <span class="admin-quick-card__icon">🏭</span>
+                            <span class="admin-quick-card__text">Nueva Bodega</span>
+                        </a>
+                        <a th:href="@{/admin/stock/nuevo}" class="admin-quick-card">
+                            <span class="admin-quick-card__icon">📋</span>
+                            <span class="admin-quick-card__text">Nuevo Stock</span>
+                        </a>
+                        <a th:href="@{/productos}" class="admin-quick-card">
+                            <span class="admin-quick-card__icon">🌐</span>
+                            <span class="admin-quick-card__text">Ver Sitio</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('adminSidebar').classList.toggle('admin-sidebar--open');
+        }
+    </script>
+
+</body>
+</html>

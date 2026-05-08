@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Administración de bodegas - StockSync.">
+    <link rel="stylesheet" th:href="@{/css/normalize.css}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <title>Admin Bodegas - StockSync</title>
+</head>
+<body class="admin-body">
+
+    <aside th:replace="~{fragments/admin-sidebar :: sidebar(seccionActiva='bodegas')}"></aside>
+
+    <main class="admin-main">
+        <header th:replace="~{fragments/admin-sidebar :: topbar(titulo='Bodegas', subtitulo='Gestión de bodegas y almacenes')}"></header>
+
+        <div class="admin-content">
+            <!-- Flash Messages -->
+            <div th:if="${successMsg}" class="admin-alert admin-alert--success">
+                <span>✅</span> <span th:text="${successMsg}">Éxito</span>
+            </div>
+            <div th:if="${errorMsg}" class="admin-alert admin-alert--error">
+                <span>❌</span> <span th:text="${errorMsg}">Error</span>
+            </div>
+
+            <div class="admin-panel">
+                <div class="admin-panel__header">
+                    <h2 class="admin-panel__title">Listado de Bodegas</h2>
+                    <a th:href="@{/admin/bodegas/nuevo}" class="admin-btn admin-btn--primary">
+                        + Nueva Bodega
+                    </a>
+                </div>
+                <div class="admin-panel__body">
+                    <div class="admin-table__wrapper">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Código</th>
+                                    <th>Nombre</th>
+                                    <th>Dirección</th>
+                                    <th>Ciudad</th>
+                                    <th>Fecha Creación</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:if="${bodegas.isEmpty()}">
+                                    <td colspan="7" class="admin-table__empty">No hay bodegas registradas.</td>
+                                </tr>
+                                <tr th:each="b : ${bodegas}">
+                                    <td th:text="${b.idBodega}">1</td>
+                                    <td><span class="admin-badge" th:text="${b.codigo}">BOD-001</span></td>
+                                    <td class="admin-table__name" th:text="${b.nombre}">Bodega</td>
+                                    <td class="admin-table__desc" th:text="${b.direccion}">Dirección</td>
+                                    <td th:text="${b.ciudad}">Ciudad</td>
+                                    <td th:text="${b.fechaCreacion}">2026-01-01</td>
+                                    <td class="admin-table__actions">
+                                        <a th:href="@{/admin/bodegas/editar/{id}(id=${b.idBodega})}"
+                                           class="admin-btn admin-btn--edit" title="Editar">✏️ Editar</a>
+                                        <a th:href="@{/admin/bodegas/eliminar/{id}(id=${b.idBodega})}"
+                                           class="admin-btn admin-btn--delete" title="Eliminar"
+                                           onclick="return confirm('¿Estás seguro de eliminar esta bodega?')">🗑️</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('adminSidebar').classList.toggle('admin-sidebar--open');
+        }
+    </script>
+
+</body>
+</html>

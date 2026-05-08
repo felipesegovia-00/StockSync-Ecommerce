@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Administración de stock - StockSync.">
+    <link rel="stylesheet" th:href="@{/css/normalize.css}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <title>Admin Stock - StockSync</title>
+</head>
+<body class="admin-body">
+
+    <aside th:replace="~{fragments/admin-sidebar :: sidebar(seccionActiva='stock')}"></aside>
+
+    <main class="admin-main">
+        <header th:replace="~{fragments/admin-sidebar :: topbar(titulo='Stock', subtitulo='Gestión del inventario por bodega')}"></header>
+
+        <div class="admin-content">
+            <!-- Flash Messages -->
+            <div th:if="${successMsg}" class="admin-alert admin-alert--success">
+                <span>✅</span> <span th:text="${successMsg}">Éxito</span>
+            </div>
+            <div th:if="${errorMsg}" class="admin-alert admin-alert--error">
+                <span>❌</span> <span th:text="${errorMsg}">Error</span>
+            </div>
+
+            <div class="admin-panel">
+                <div class="admin-panel__header">
+                    <h2 class="admin-panel__title">Registros de Stock</h2>
+                    <a th:href="@{/admin/stock/nuevo}" class="admin-btn admin-btn--primary">
+                        + Nuevo Registro
+                    </a>
+                </div>
+                <div class="admin-panel__body">
+                    <div class="admin-table__wrapper">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Producto</th>
+                                    <th>Bodega</th>
+                                    <th>Cantidad</th>
+                                    <th>Fecha Ingreso</th>
+                                    <th>Hora</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:if="${stocks.isEmpty()}">
+                                    <td colspan="7" class="admin-table__empty">No hay registros de stock.</td>
+                                </tr>
+                                <tr th:each="s : ${stocks}">
+                                    <td th:text="${s.idStock}">1</td>
+                                    <td class="admin-table__name" th:text="${s.producto.nombre}">Producto</td>
+                                    <td th:text="${s.bodega.nombre}">Bodega</td>
+                                    <td>
+                                        <span class="admin-stock-badge" th:text="${s.cantidad}">0</span>
+                                    </td>
+                                    <td th:text="${s.fechaIngreso}">2026-01-01</td>
+                                    <td th:text="${s.horaIngreso}">12:00</td>
+                                    <td class="admin-table__actions">
+                                        <a th:href="@{/admin/stock/editar/{id}(id=${s.idStock})}"
+                                           class="admin-btn admin-btn--edit" title="Editar">✏️ Editar</a>
+                                        <a th:href="@{/admin/stock/eliminar/{id}(id=${s.idStock})}"
+                                           class="admin-btn admin-btn--delete" title="Eliminar"
+                                           onclick="return confirm('¿Estás seguro de eliminar este registro?')">🗑️</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('adminSidebar').classList.toggle('admin-sidebar--open');
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Consulta la información de cada bodega y el inventario disponible.">
+    <script>if(localStorage.getItem('theme')==='dark')document.documentElement.setAttribute('data-theme','dark');</script>
+    <link rel="stylesheet" th:href="@{/css/normalize.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <title>Bodegas - StockSync</title>
+</head>
+<body>
+
+    <header th:replace="~{fragments/header :: header(paginaActiva=${paginaActiva})}"></header>
+
+    <!-- ============================
+         Hero Section
+         ============================ -->
+    <section class="hero">
+        <div class="hero__container">
+            <div class="hero__grid">
+                <div class="hero__info">
+                    <h1 class="hero__title">
+                        Nuestras <span class="hero__span">Bodegas</span>
+                    </h1>
+                    <p class="hero__par">
+                        Consulta la información de cada bodega y el inventario disponible.
+                        Selecciona una bodega para ver sus productos en stock.
+                    </p>
+                    <a th:href="@{#bodegas}">
+                        <button class="hero__button">Ver Bodegas</button>
+                    </a>
+                </div>
+                <div class="hero__image">
+                    <div class="hero__img-placeholder">
+                        <span class="hero__img-icon">🏭</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================
+         Tarjetas de Bodegas
+         ============================ -->
+    <section class="bodega" id="bodegas">
+        <div class="bodega__container">
+            <h2 class="bodega__tit">Bodegas Disponibles</h2>
+
+            <div th:if="${bodegas == null or bodegas.isEmpty()}" class="empty-state">
+                <span class="empty-state__icon">🏚️</span>
+                <p class="empty-state__text">No hay bodegas registradas en la base de datos.</p>
+            </div>
+
+            <div class="bodega__grid" th:unless="${bodegas == null or bodegas.isEmpty()}">
+                <div class="bodega__card" th:each="bod : ${bodegas}">
+                    <span class="bodega__icon" th:text="${bod.icono}">🏭</span>
+                    <span class="bodega__code" th:text="${bod.codigo}">BOD-XXX</span>
+                    <h3 class="bodega__name" th:text="${bod.nombre}">Nombre Bodega</h3>
+                    <p class="bodega__desc" th:text="${bod.direccion}">Dirección</p>
+                    <p class="bodega__capacity" th:text="${bod.ciudad}">Ciudad</p>
+                    <div class="bodega__stock">
+                        <p class="bodega__stock-label">Productos en esta bodega:</p>
+                        <p th:if="${bod.productos == null or bod.productos.isEmpty()}"
+                           class="product__no-stock">Sin productos en stock</p>
+                        <ul class="bodega__stock-list"
+                            th:unless="${bod.productos == null or bod.productos.isEmpty()}">
+                            <li class="bodega__stock-item" th:each="item : ${bod.productos}">
+                                <span class="stock__producto"
+                                      th:text="${item.productoNombre}">Producto</span>
+                                <span class="stock__cantidad"
+                                      th:text="${item.cantidad} + ' uds.'">0 uds.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================
+         Tabla Stock por Bodega
+         ============================ -->
+    <section class="stock-table" id="stock-tabla">
+        <div class="stock-table__container">
+            <h2 class="stock-table__tit">Stock por Bodega</h2>
+            <div class="stock-table__wrapper">
+                <table class="stock-table__table">
+                    <thead>
+                        <tr>
+                            <th>Bodega</th>
+                            <th>Ciudad</th>
+                            <th>Producto</th>
+                            <th>Código</th>
+                            <th>Cantidad</th>
+                            <th>Fecha Ingreso</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Resultados del selector -->
+                        <th:block th:if="${mostrarResultados and stockFiltrado != null}">
+                            <tr th:if="${stockFiltrado.isEmpty()}">
+                                <td colspan="6" class="table__empty">
+                                    No se encontraron registros con los filtros seleccionados.
+                                </td>
+                            </tr>
+                            <tr th:each="item : ${stockFiltrado}">
+                                <td th:text="${item.bodegaNombre}">Bodega</td>
+                                <td th:text="${item.bodegaCiudad}">Ciudad</td>
+                                <td th:text="${item.productoNombre}">Producto</td>
+                                <td th:text="${item.productoCodigo}">PROD-001</td>
+                                <td><span class="table__cantidad" th:text="${item.cantidad}">0</span></td>
+                                <td th:text="${item.fechaIngreso}">2026-01-01</td>
+                            </tr>
+                        </th:block>
+
+                        <!-- Vista completa (sin filtro) -->
+                        <th:block th:unless="${mostrarResultados}">
+                            <th:block th:each="bod : ${bodegas}">
+                                <tr th:each="item : ${bod.productos}">
+                                    <td th:text="${bod.nombre}">Bodega</td>
+                                    <td th:text="${bod.ciudad}">Ciudad</td>
+                                    <td th:text="${item.productoNombre}">Producto</td>
+                                    <td th:text="${item.productoCodigo}">PROD-001</td>
+                                    <td><span class="table__cantidad" th:text="${item.cantidad}">0</span></td>
+                                    <td th:text="${item.fechaIngreso}">2026-01-01</td>
+                                </tr>
+                            </th:block>
+                        </th:block>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================
+         Selector de Bodega
+         ============================ -->
+    <section class="selector" id="selector">
+        <div class="selector__container">
+            <h3 class="selector__title">Selector de Bodega</h3>
+
+            <div th:if="${mostrarResultados}" class="selector__resultado">
+                <p th:if="${stockFiltrado != null and !stockFiltrado.isEmpty()}"
+                   class="selector__resultado-ok">
+                    ✅ Se encontraron <strong th:text="${stockFiltrado.size()}">0</strong> registro(s).
+                </p>
+                <p th:if="${stockFiltrado == null or stockFiltrado.isEmpty()}"
+                   class="selector__resultado-vacio">
+                    ⚠️ No se encontraron registros con los filtros aplicados.
+                </p>
+            </div>
+
+            <div class="selector__form">
+                <div>
+                    <label class="selector__label" for="selectBodega">Seleccionar Bodega</label>
+                    <select class="selector__select" id="selectBodega">
+                        <option value="">-- Selecciona una bodega --</option>
+                        <option th:each="b : ${bodegasSelector}"
+                                th:value="${b.idBodega}"
+                                th:text="${b.nombre}"
+                                th:selected="${idBodegaSeleccionada != null and idBodegaSeleccionada == b.idBodega}">
+                            Bodega
+                        </option>
+                    </select>
+                </div>
+                <div>
+                    <label class="selector__label" for="selectProducto">Filtrar por Producto</label>
+                    <select class="selector__select" id="selectProducto">
+                        <option value="">-- Todos los productos --</option>
+                        <option th:each="p : ${productosSelector}"
+                                th:value="${p.idProducto}"
+                                th:text="${p.nombre}"
+                                th:selected="${idProductoSeleccionado != null and idProductoSeleccionado == p.idProducto}">
+                            Producto
+                        </option>
+                    </select>
+                </div>
+                <button class="selector__button" type="button" onclick="consultarStock()">
+                    Consultar Stock
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+    <script>
+        function consultarStock() {
+            const idBodega   = document.getElementById('selectBodega').value;
+            const idProducto = document.getElementById('selectProducto').value;
+            let url = '/bodegas/stock?';
+            if (idBodega)   url += 'idBodega='   + idBodega   + '&';
+            if (idProducto) url += 'idProducto=' + idProducto;
+            window.location.href = url + '#stock-tabla';
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<footer th:fragment="footer" class="footer">
+    <div class="footer__container">
+        <nav class="footer__nav">
+            <a class="footer__link" th:href="@{/productos}">Productos</a>
+            <a class="footer__link" th:href="@{/bodegas}">Bodegas</a>
+            <a class="footer__link" th:href="@{/admin}">Admin</a>
+        </nav>
+        <p class="footer__parr no-margin no-padding">
+            StockSync &copy; 2026 &mdash; Todos los derechos reservados.
+        </p>
+    </div>
+</footer>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<header th:fragment="header(paginaActiva)" class="header" id="inicio">
+    <div class="header__container">
+        <a class="header__logo" th:href="@{/productos}">
+            Stock<span>Sync</span>
+        </a>
+        <nav class="nav" id="nav">
+            <a class="nav__link"
+               th:href="@{/productos}"
+               th:classappend="${paginaActiva == 'productos'} ? ' nav__link--active' : ''">
+                Productos
+            </a>
+            <a class="nav__link"
+               th:href="@{/bodegas}"
+               th:classappend="${paginaActiva == 'bodegas'} ? ' nav__link--active' : ''">
+                Bodegas
+            </a>
+            <a class="nav__link"
+               th:href="@{/admin}"
+               th:classappend="${paginaActiva == 'admin'} ? ' nav__link--active' : ''">
+                Admin
+            </a>
+            <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Cambiar tema">
+                <span class="theme-toggle__icon--dark">🌙</span>
+                <span class="theme-toggle__icon--light">☀️</span>
+            </button>
+        </nav>
+    </div>
+    <script>
+        (function() {
+            var t = localStorage.getItem('theme');
+            if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+        })();
+        function toggleTheme() {
+            var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+    </script>
+</header>

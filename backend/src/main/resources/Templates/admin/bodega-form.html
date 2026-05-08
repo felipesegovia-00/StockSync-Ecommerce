@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Formulario de bodega - StockSync.">
+    <link rel="stylesheet" th:href="@{/css/normalize.css}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <title th:text="${bodega.idBodega != null} ? 'Editar Bodega' : 'Nueva Bodega'">Bodega - StockSync</title>
+</head>
+<body class="admin-body">
+
+    <aside th:replace="~{fragments/admin-sidebar :: sidebar(seccionActiva='bodegas')}"></aside>
+
+    <main class="admin-main">
+        <header th:replace="~{fragments/admin-sidebar :: topbar(titulo='Formulario de Bodega', subtitulo='Crear o editar una bodega')}"></header>
+
+        <div class="admin-content">
+            <div class="admin-panel">
+                <div class="admin-panel__header">
+                    <h2 class="admin-panel__title"
+                        th:text="${bodega.idBodega != null} ? 'Editar Bodega' : 'Nueva Bodega'">
+                        Formulario
+                    </h2>
+                </div>
+                <div class="admin-panel__body">
+                    <form th:action="@{/admin/bodegas/guardar}" method="post" class="admin-form">
+                        <input type="hidden" name="idBodega" th:value="${bodega.idBodega}">
+
+                        <div class="admin-form__row">
+                            <div class="admin-form__group">
+                                <label class="admin-form__label" for="codigo">Código</label>
+                                <input class="admin-form__input" type="text" id="codigo" name="codigo"
+                                       th:value="${bodega.codigo}" placeholder="Ej: BOD-SCL-01" required>
+                            </div>
+                            <div class="admin-form__group">
+                                <label class="admin-form__label" for="nombre">Nombre</label>
+                                <input class="admin-form__input" type="text" id="nombre" name="nombre"
+                                       th:value="${bodega.nombre}" placeholder="Nombre de la bodega" required>
+                            </div>
+                        </div>
+
+                        <div class="admin-form__group">
+                            <label class="admin-form__label" for="direccion">Dirección</label>
+                            <input class="admin-form__input" type="text" id="direccion" name="direccion"
+                                   th:value="${bodega.direccion}" placeholder="Dirección de la bodega">
+                        </div>
+
+                        <div class="admin-form__row">
+                            <div class="admin-form__group">
+                                <label class="admin-form__label" for="ciudad">Ciudad</label>
+                                <input class="admin-form__input" type="text" id="ciudad" name="ciudad"
+                                       th:value="${bodega.ciudad}" placeholder="Ciudad">
+                            </div>
+                        </div>
+
+                        <div class="admin-form__actions">
+                            <button type="submit" class="admin-btn admin-btn--primary">
+                                💾 Guardar Bodega
+                            </button>
+                            <a th:href="@{/admin/bodegas}" class="admin-btn admin-btn--secondary">
+                                Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('adminSidebar').classList.toggle('admin-sidebar--open');
+        }
+    </script>
+
+</body>
+</html>

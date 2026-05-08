@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/normalize.css}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <title>Admin Stock - StockSync</title>
+</head>
+<body class="admin-body">
+    <aside th:replace="~{fragments/admin-sidebar :: sidebar(seccionActiva='stock')}"></aside>
+    <main class="admin-main">
+        <header th:replace="~{fragments/admin-sidebar :: topbar(titulo='Stock', subtitulo='Gestión del inventario')}"></header>
+        <div class="admin-content">
+            <div class="admin-panel">
+                <div class="admin-panel__header">
+                    <h2 class="admin-panel__title" th:text="${stock.idStock != null} ? 'Editar Stock' : 'Nuevo Stock'">Formulario</h2>
+                </div>
+                <div class="admin-panel__body">
+                    <form th:action="@{/admin/stock/guardar}" method="post" class="admin-form">
+                        <input type="hidden" name="idStock" th:value="${stock.idStock}">
+                        <div class="admin-form__row">
+                            <div class="admin-form__group">
+                                <label class="admin-form__label" for="idProducto">Producto</label>
+                                <select class="admin-form__select" id="idProducto" name="idProducto" required>
+                                    <option value="">-- Selecciona un producto --</option>
+                                    <option th:each="p : ${productos}" th:value="${p.idProducto}"
+                                            th:text="${p.codigo + ' - ' + p.nombre}"
+                                            th:selected="${stock.producto != null and stock.producto.idProducto == p.idProducto}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="admin-form__group">
+                                <label class="admin-form__label" for="idBodega">Bodega</label>
+                                <select class="admin-form__select" id="idBodega" name="idBodega" required>
+                                    <option value="">-- Selecciona una bodega --</option>
+                                    <option th:each="b : ${bodegas}" th:value="${b.idBodega}"
+                                            th:text="${b.codigo + ' - ' + b.nombre}"
+                                            th:selected="${stock.bodega != null and stock.bodega.idBodega == b.idBodega}">
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="admin-form__group">
+                            <label class="admin-form__label" for="cantidad">Cantidad</label>
+                            <input class="admin-form__input" type="number" id="cantidad" name="cantidad"
+                                   th:value="${stock.cantidad}" placeholder="0" min="0" required>
+                        </div>
+                        <div class="admin-form__actions">
+                            <button type="submit" class="admin-btn admin-btn--primary">💾 Guardar</button>
+                            <button th:href="@{/admin/stock}" class="admin-btn admin-btn--secondary">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        function toggleSidebar() {
+            document.getElementById('adminSidebar').classList.toggle('admin-sidebar--open');
+        }
+    </script>
+</body>
+</html>

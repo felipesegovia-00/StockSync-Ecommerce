@@ -11,7 +11,7 @@ CREATE TABLE products (
                           name VARCHAR(200) NOT NULL,
                           description TEXT,
                           price DECIMAL(19, 2) NOT NULL,
-                          stock INTEGER NOT NULL,
+                          stock BIGSERIAL NOT NULL,
                           sku VARCHAR(50) UNIQUE,
                           image_url VARCHAR(500),
                           active BOOLEAN DEFAULT TRUE,

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<!-- ============================
+     Sidebar del Admin
+     ============================ -->
+<aside th:fragment="sidebar(seccionActiva)" class="admin-sidebar" id="adminSidebar">
+    <div class="admin-sidebar__header">
+        <span class="admin-sidebar__avatar">A</span>
+        <div class="admin-sidebar__brand">
+            <span class="admin-sidebar__title">Admin</span>
+            <span class="admin-sidebar__subtitle">StockSync</span>
+        </div>
+    </div>
+
+    <nav class="admin-sidebar__nav">
+        <a th:href="@{/admin}"
+           class="admin-sidebar__link"
+           th:classappend="${seccionActiva == 'dashboard'} ? ' admin-sidebar__link--active' : ''">
+            <span class="admin-sidebar__icon">📊</span>
+            Dashboard
+        </a>
+        <a th:href="@{/admin/productos}"
+           class="admin-sidebar__link"
+           th:classappend="${seccionActiva == 'productos'} ? ' admin-sidebar__link--active' : ''">
+            <span class="admin-sidebar__icon">📦</span>
+            Productos
+        </a>
+        <a th:href="@{/admin/bodegas}"
+           class="admin-sidebar__link"
+           th:classappend="${seccionActiva == 'bodegas'} ? ' admin-sidebar__link--active' : ''">
+            <span class="admin-sidebar__icon">🏭</span>
+            Bodegas
+        </a>
+        <a th:href="@{/admin/stock}"
+           class="admin-sidebar__link"
+           th:classappend="${seccionActiva == 'stock'} ? ' admin-sidebar__link--active' : ''">
+            <span class="admin-sidebar__icon">📋</span>
+            Stock
+        </a>
+    </nav>
+
+    <div class="admin-sidebar__footer">
+        <a th:href="@{/productos}" class="admin-sidebar__link admin-sidebar__link--back">
+            <span class="admin-sidebar__icon">↩️</span>
+            Volver al Sitio
+        </a>
+    </div>
+</aside>
+
+<!-- ============================
+     Top Bar del Admin
+     ============================ -->
+<header th:fragment="topbar(titulo, subtitulo)" class="admin-topbar">
+    <button class="admin-topbar__toggle" id="sidebarToggle" onclick="toggleSidebar()">☰</button>
+    <div class="admin-topbar__info">
+        <h1 class="admin-topbar__title" th:text="${titulo}">Admin Dashboard</h1>
+        <p class="admin-topbar__subtitle" th:text="${subtitulo}">Panel de administración</p>
+    </div>
+</header>
+
+</html>
