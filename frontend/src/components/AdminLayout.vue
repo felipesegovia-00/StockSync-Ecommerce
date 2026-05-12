@@ -17,6 +17,7 @@
       >
         <template v-slot:append>
           <v-btn
+            v-if="!$vuetify.display.mobile"
             :icon="rail ? 'mdi-chevron-right' : 'mdi-chevron-left'"
             variant="text"
             size="small"
@@ -57,7 +58,7 @@
     </v-navigation-drawer>
 
     <v-app-bar flat>
-      <v-app-bar-nav-icon @click="drawer = !drawer" />
+      <v-app-bar-nav-icon @click="$vuetify.display.mobile ? drawer = !drawer : rail = !rail" />
       <v-app-bar-title>{{ pageTitle }}</v-app-bar-title>
       <v-spacer />
       <v-btn
