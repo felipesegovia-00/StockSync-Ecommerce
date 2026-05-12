@@ -12,14 +12,14 @@
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│                    StockSync                              │
+│                    StockSync                             │
 │                                                          │
 │  ┌─────────────────────┐     ┌────────────────────────┐  │
 │  │   Frontend (Vue 3)  │     │   Backend (Spring Boot)│  │
-│  │   Vuetify + Pinia   │────▶│   REST API + JPA + JWT │  │
+│  │   Vuetify + Pinia   │───▶│   REST API + JPA + JWT │  │
 │  │   Vue Router (hash) │     │   PostgreSQL + Flyway  │  │
 │  └─────────────────────┘     └────────────────────────┘  │
-│         localhost:5173              localhost:8080        │
+│         localhost:5173              localhost:8080       │
 │         (dev) / /api/ (prod)        /api/v1/*            │
 └──────────────────────────────────────────────────────────┘
 ```
