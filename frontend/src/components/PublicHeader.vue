@@ -40,6 +40,13 @@
       </template>
       <template v-else>
         <v-btn
+          to="/register"
+          variant="text"
+          class="ml-2"
+        >
+          Registrarse
+        </v-btn>
+        <v-btn
           to="/login"
           variant="tonal"
           color="primary"
