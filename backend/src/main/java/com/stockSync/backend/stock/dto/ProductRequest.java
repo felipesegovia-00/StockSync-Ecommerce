@@ -1,7 +1,6 @@
 package com.stockSync.backend.stock.dto;
 
 import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -9,11 +8,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductRequest {
+
     @NotBlank(message = "El nombre del producto no puede estar vacio")
     private String name;
 
@@ -22,10 +23,6 @@ public class ProductRequest {
     @NotNull(message = "El precio es obligatorio")
     @DecimalMin(value = "0.0", message = "El precio no puede ser negativo")
     private BigDecimal price;
-
-    @NotNull(message = "El stock es obligatorio")
-    @Min(value = 0, message = "El Stock no puede ser negativo")
-    private Long stock;
 
     private String sku;
 
@@ -36,6 +33,18 @@ public class ProductRequest {
     @NotNull(message = "La categoria es obligatoria")
     private Long categoryId;
 
+    private List<WarehouseEntry> warehouseStocks;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class WarehouseEntry {
+        @NotNull
+        private Long warehouseId;
+
+        @NotNull
+        private Integer quantity;
+    }
 }
 // Notas :
 //1. categoryId (Long): Solo enviamos el ID de la categoría en el JSON de entrada, no todo el objeto Category. Luego en el Servicio (Fase 5) buscaremos la entidad Category usando este ID.

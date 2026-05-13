@@ -13,6 +13,7 @@ import java.util.List;
 public interface ProductMapper {
 
     @Mapping(source = "category.name", target = "categoryName")
+    @Mapping(target = "warehouseStocks", ignore = true)
     ProductResponse toResponse(Product entity);
 
     @Mapping(target = "id", ignore = true)
@@ -20,10 +21,12 @@ public interface ProductMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "active", source = "active", defaultValue = "true")
+    @Mapping(target = "stock", ignore = true)
     Product toEntity(ProductRequest request);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "category", ignore = true)
+    @Mapping(target = "stock", ignore = true)
     void updateEntityFromRequest(ProductRequest request, @MappingTarget Product entity);
 
     List<ProductResponse> toResponseList(List<Product> entities);
