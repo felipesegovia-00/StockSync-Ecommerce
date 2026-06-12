@@ -23,7 +23,7 @@
             <v-text-field
               v-model="oldPassword"
               label="Contraseña actual"
-              :append-inner-icon="showOldPassword ? 'mdi-eye' : 'mdi-eye-off'"
+              :append-inner-icon="showOldPassword ? 'mdi-eye-off' : 'mdi-eye'"
               :type="showOldPassword ? 'text' : 'password'"
               @click:append-inner="showOldPassword = !showOldPassword"
               prepend-inner-icon="mdi-lock"
@@ -34,7 +34,7 @@
             <v-text-field
               v-model="newPassword"
               label="Nueva contraseña"
-              :append-inner-icon="showNewPassword ? 'mdi-eye' : 'mdi-eye-off'"
+              :append-inner-icon="showNewPassword ? 'mdi-eye-off' : 'mdi-eye'"
               :type="showNewPassword ? 'text' : 'password'"
               @click:append-inner="showNewPassword = !showNewPassword"
               prepend-inner-icon="mdi-lock-plus"

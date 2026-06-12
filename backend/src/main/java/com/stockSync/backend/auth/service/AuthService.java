@@ -39,9 +39,14 @@ public class AuthService {
             throw new ConflictException("El email ya existe");
         }
 
+        if (userRepository.existsByCompanyName(request.getCompanyName())) {
+            throw new ConflictException("La empresa ya se encuentra registrada");
+        }
+
         var user = User.builder()
                 .nombre(request.getNombre())
                 .email(request.getEmail())
+                .companyName(request.getCompanyName())
                 .password(Objects.requireNonNull(passwordEncoder.encode(request.getPassword())))
                 .role(Role.ADMIN)
                 .build();
@@ -70,6 +75,9 @@ public class AuthService {
                     .build();
         }
 
+        String companyName = user.getOwner() != null ? user.getOwner().getCompanyName() : user.getCompanyName();
+        String companyLogo = user.getOwner() != null ? user.getOwner().getCompanyLogo() : user.getCompanyLogo();
+
         return AuthResponse.builder()
                 .token(jwtToken)
                 .email(user.getEmail())
@@ -77,6 +85,8 @@ public class AuthService {
                 .role(user.getRole().name())
                 .forcePasswordChange(user.isForcePasswordChange())
                 .assignedWarehouse(warehouseDto)
+                .companyName(companyName)
+                .companyLogo(companyLogo)
                 .build();
     }
 

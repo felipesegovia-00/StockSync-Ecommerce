@@ -1,6 +1,32 @@
 <template>
   <v-row class="mx-0" align="start">
     <v-col cols="12" md="5">
+      <v-card elevation="2" class="mb-4">
+        <v-card-title class="text-wrap">Logo de la Empresa</v-card-title>
+        <v-card-text>
+          <v-alert v-if="logoSuccess" type="success" variant="tonal" class="mb-4" closable @click:close="logoSuccess = false">
+            Logo actualizado correctamente. Por favor recarga la página para ver los cambios en todo el menú.
+          </v-alert>
+          <v-alert v-if="logoError" type="error" variant="tonal" class="mb-4" closable @click:close="logoError = ''">
+            {{ logoError }}
+          </v-alert>
+          <div v-if="auth.companyLogo" class="mb-4 text-center">
+             <v-img :src="auth.companyLogo" max-height="100" contain></v-img>
+          </div>
+          <v-file-input
+            v-model="logoFile"
+            label="Seleccionar nueva imagen"
+            accept="image/*"
+            prepend-inner-icon="mdi-camera"
+            prepend-icon=""
+            @change="handleLogoSelect"
+            :loading="uploadingLogo"
+            variant="outlined"
+          ></v-file-input>
+          <v-btn color="primary" block class="mt-2" :loading="uploadingLogo" :disabled="!logoBase64" @click="uploadLogo">Guardar Logo</v-btn>
+        </v-card-text>
+      </v-card>
+
       <v-card elevation="2">
         <v-card-title class="text-wrap">Invitar Usuario</v-card-title>
         <v-card-text>
@@ -213,7 +239,11 @@ import { useUsersStore } from '../../stores/users'
 import { getWarehouses } from '../../api/warehouses'
 import ResponsiveTable from '../../components/ResponsiveTable.vue'
 
+import api from '../../api/client'
+import { useAuthStore } from '../../stores/auth'
+
 const store = useUsersStore()
+const auth = useAuthStore()
 const warehouses = ref([])
 const loading = ref(false)
 const filterText = ref('')
@@ -258,6 +288,12 @@ const deleteDialog = ref(false)
 const userToDelete = ref(null)
 const deleting = ref(false)
 
+const uploadingLogo = ref(false)
+const logoSuccess = ref(false)
+const logoError = ref('')
+const logoFile = ref(null)
+const logoBase64 = ref('')
+
 const form = ref({
   email: '',
   role: null,
@@ -299,6 +335,38 @@ async function handleInvite() {
     inviteError.value = e.response?.data?.message || 'Error al invitar usuario'
   } finally {
     inviting.value = false
+  }
+}
+
+function handleLogoSelect(event) {
+  const file = event.target.files[0]
+  if (file) {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      logoBase64.value = e.target.result
+    }
+    reader.readAsDataURL(file)
+  } else {
+    logoBase64.value = ''
+  }
+}
+
+async function uploadLogo() {
+  if (!logoBase64.value) return
+  uploadingLogo.value = true
+  logoError.value = ''
+  logoSuccess.value = false
+  try {
+    const response = await api.put('/company/logo', { companyLogo: logoBase64.value })
+    auth.user.companyLogo = response.data.companyLogo
+    localStorage.setItem('user', JSON.stringify(auth.user)) // Force refresh local storage if needed
+    logoSuccess.value = true
+    logoFile.value = null
+    logoBase64.value = ''
+  } catch (e) {
+    logoError.value = e.response?.data?.message || 'Error al subir el logo'
+  } finally {
+    uploadingLogo.value = false
   }
 }
 

@@ -4,8 +4,8 @@ export function login(email, password, rememberMe = false) {
   return client.post('/login', { email, password, rememberMe: !!rememberMe })
 }
 
-export function register(nombre, email, password) {
-  return client.post('/register', { nombre, email, password })
+export function register(companyName, nombre, email, password) {
+  return client.post('/register', { companyName, nombre, email, password })
 }
 
 export function changePassword(oldPassword, newPassword) {

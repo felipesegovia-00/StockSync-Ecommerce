@@ -18,8 +18,16 @@
 
           <v-form @submit.prevent="handleRegister" v-if="!successMessage">
             <v-text-field
+              v-model="companyName"
+              label="Nombre de la Empresa"
+              prepend-inner-icon="mdi-domain"
+              :rules="[rules.required]"
+              required
+            />
+
+            <v-text-field
               v-model="nombre"
-              label="Nombre"
+              label="Nombre del Administrador"
               prepend-inner-icon="mdi-account"
               :rules="[rules.required]"
               required
@@ -37,7 +45,7 @@
             <v-text-field
               v-model="password"
               label="Contraseña"
-              :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+              :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
               :type="showPassword ? 'text' : 'password'"
               @click:append-inner="showPassword = !showPassword"
               prepend-inner-icon="mdi-lock"
@@ -83,6 +91,7 @@ import { useAuthStore } from '../../stores/auth'
 const router = useRouter()
 const auth = useAuthStore()
 
+const companyName = ref('')
 const nombre = ref('')
 const email = ref('')
 const password = ref('')
@@ -105,7 +114,7 @@ async function handleRegister() {
   error.value = ''
   successMessage.value = ''
   try {
-    const response = await auth.register(nombre.value, email.value, password.value)
+    const response = await auth.register(companyName.value, nombre.value, email.value, password.value)
     successMessage.value = response.data.message + " Redirigiendo al login..."
     setTimeout(() => {
       router.push('/login')

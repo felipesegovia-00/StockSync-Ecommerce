@@ -15,6 +15,8 @@ export const useAuthStore = defineStore('auth', () => {
     const userRole = computed(() => user.value?.role || '')
     const userEmail = computed(() => user.value?.email || '')
     const userName = computed(() => user.value?.nombre || '')
+    const companyName = computed(() => user.value?.companyName || '')
+    const companyLogo = computed(() => user.value?.companyLogo || '')
     const adminViewWarehouseId = ref(localStorage.getItem('adminViewWarehouseId') ? Number(localStorage.getItem('adminViewWarehouseId')) : null)
 
     const assignedWarehouseId = computed(() => {
@@ -36,7 +38,14 @@ export const useAuthStore = defineStore('auth', () => {
     // Función auxiliar interna para guardar los datos de sesión y evitar repetir código
     function setSessionData(data, forcePasswordChange = false) {
         token.value = data.token
-        user.value = { email: data.email, nombre: data.nombre, role: data.role, assignedWarehouse: data.assignedWarehouse }
+        user.value = { 
+          email: data.email, 
+          nombre: data.nombre, 
+          role: data.role, 
+          assignedWarehouse: data.assignedWarehouse,
+          companyName: data.companyName,
+          companyLogo: data.companyLogo
+        }
         mustChangePassword.value = forcePasswordChange
 
         localStorage.setItem('jwt', data.token)
@@ -51,9 +60,9 @@ export const useAuthStore = defineStore('auth', () => {
         return data
     }
 
-    async function register(nombre, email, password) {
+    async function register(companyName, nombre, email, password) {
         // Ya no inicia sesión, solo registra al usuario
-        return await apiRegister(nombre, email, password)
+        return await apiRegister(companyName, nombre, email, password)
     }
 
     async function changePassword(oldPassword, newPassword) {
@@ -78,7 +87,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     return {
         token, user, mustChangePassword, adminViewWarehouseId,
-        isAuthenticated, isAdmin, isLocal, isBodega, userRole, userEmail, userName, assignedWarehouseId,
+        isAuthenticated, isAdmin, isLocal, isBodega, userRole, userEmail, userName, assignedWarehouseId, companyName, companyLogo,
         login, register, changePassword, logout, clear, setAdminViewWarehouseId
     }
 })

@@ -61,7 +61,8 @@ public class CategoryServiceImplTest {
     }
 
     @Test
-    public void createCategory_Success() {
+    public void givenValidRequest_whenCreateCategory_thenSaveAndReturnCategory() {
+        // Arrange
         CategoryRequest request = new CategoryRequest();
         request.setName("Electronics");
 
@@ -76,27 +77,33 @@ public class CategoryServiceImplTest {
         when(categoryRepository.save(any(Category.class))).thenReturn(category);
         when(categoryMapper.toResponse(category)).thenReturn(response);
 
+        // Act
         CategoryResponse result = categoryService.createCategory(request);
 
+        // Assert
         assertNotNull(result);
         assertEquals("Electronics", result.getName());
         verify(categoryRepository).save(any(Category.class));
     }
 
     @Test
-    public void createCategory_Conflict_ThrowsException() {
+    public void givenExistingCategory_whenCreateCategory_thenThrowConflictException() {
+        // Arrange
         CategoryRequest request = new CategoryRequest();
         request.setName("Electronics");
 
         when(categoryRepository.existsByNameAndUserId("Electronics", mockUser.getId())).thenReturn(true);
 
+        // Act & Assert
         assertThrows(ConflictException.class, () -> categoryService.createCategory(request));
 
+        // Verify
         verify(categoryRepository, never()).save(any());
     }
 
     @Test
-    public void getCategoryById_WrongUser_ThrowsException() {
+    public void givenWrongUser_whenGetCategory_thenThrowNotFoundException() {
+        // Arrange
         Category category = new Category();
         category.setId(2L);
         User otherUser = new User();
@@ -105,11 +112,13 @@ public class CategoryServiceImplTest {
 
         when(categoryRepository.findById(2L)).thenReturn(Optional.of(category));
 
+        // Act & Assert
         assertThrows(ResourceNotFoundException.class, () -> categoryService.getCategoryById(2L));
     }
 
     @Test
-    public void deleteCategory_HasProducts_ThrowsConflictException() {
+    public void givenCategoryWithProducts_whenDelete_thenThrowConflictException() {
+        // Arrange
         Category category = new Category();
         category.setId(2L);
         category.setUser(mockUser);
@@ -120,7 +129,10 @@ public class CategoryServiceImplTest {
 
         when(categoryRepository.findById(2L)).thenReturn(Optional.of(category));
 
+        // Act & Assert
         assertThrows(ConflictException.class, () -> categoryService.deleteCategory(2L));
+        
+        // Verify
         verify(categoryRepository, never()).delete(any());
     }
 }

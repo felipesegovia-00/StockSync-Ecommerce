@@ -19,6 +19,8 @@ public class AuthResponse {
     private String nombre;
     private String role;
     private boolean forcePasswordChange;
+    private String companyName;
+    private String companyLogo;
 
     private WarehouseDto assignedWarehouse;
 

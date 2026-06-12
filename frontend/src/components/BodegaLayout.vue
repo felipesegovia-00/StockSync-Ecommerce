@@ -14,20 +14,17 @@
 
       <template #prepend>
         <v-list-item
-            class="px-4 pt-4 pb-2"
-            :title="nombre"
-            :subtitle="email"
-            lines="two"
+          class="px-4 pt-4 pb-2"
+          :title="auth.companyName || auth.userName"
+          :subtitle="auth.userEmail"
+          lines="two"
         >
-          <template #prepend>
-            <v-avatar
-                color="primary"
-                size="40"
-                class="mr-3"
-            >
-              <span class="text-white font-weight-bold">
-                {{ inicial }}
-              </span>
+          <template v-slot:prepend>
+            <v-avatar v-if="auth.companyLogo" size="40" class="mr-3" rounded="0">
+              <v-img :src="auth.companyLogo"></v-img>
+            </v-avatar>
+            <v-avatar v-else color="primary" size="40" class="mr-3">
+              <span class="text-white font-weight-bold">{{ initials }}</span>
             </v-avatar>
           </template>
         </v-list-item>
@@ -167,13 +164,9 @@ const rail = ref(false)
 const nombre = computed(() => auth.userName || 'Usuario Bodega')
 const email = computed(() => auth.userEmail || 'bodega@stocksync.cl')
 
-const inicial = computed(() => {
-  return nombre.value
-      .split(' ')
-      .map(w => w[0])
-      .join('')
-      .slice(0, 2)
-      .toUpperCase()
+const initials = computed(() => {
+  const name = auth.companyName || auth.userName || 'A'
+  return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
 })
 
 const isDark = computed(() =>

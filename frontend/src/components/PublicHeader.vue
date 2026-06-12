@@ -1,11 +1,12 @@
 <template>
   <v-app-bar flat density="comfortable" class="px-2" style="padding-left: 4px;">
     <v-container class="d-flex align-center pa-0">
-      <router-link to="/" class="text-decoration-none">
+      <router-link to="/" class="text-decoration-none d-flex align-center">
+        <v-img v-if="auth.companyLogo" :src="auth.companyLogo" max-width="40" max-height="40" class="mr-2"></v-img>
         <v-app-bar-title
             class="font-weight-bold text-primary cursor-pointer text-h6 text-sm-h5 text-md-h4"
         >
-          StockSync
+          {{ auth.companyName || 'StockSync' }}
         </v-app-bar-title>
       </router-link>
 

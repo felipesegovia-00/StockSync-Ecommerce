@@ -71,7 +71,8 @@ public class ProductServiceImplTest {
     }
 
     @Test
-    public void getProductById_Success() {
+    public void givenExistingProductId_whenGetProductById_thenReturnProduct() {
+        // Arrange
         Long productId = 1L;
         Product product = new Product();
         product.setId(productId);
@@ -84,27 +85,33 @@ public class ProductServiceImplTest {
         when(productMapper.toResponse(product)).thenReturn(mockResponse);
         when(stockRepository.findByProductIdAndUserId(productId, mockUser.getId())).thenReturn(new ArrayList<>());
 
+        // Act
         ProductResponse result = productService.getProductById(productId);
 
+        // Assert
         assertNotNull(result);
         assertEquals(productId, result.getId());
         verify(productRepository).findById(productId);
     }
 
     @Test
-    public void getProductById_NotFound_ThrowsException() {
+    public void givenNonExistingProductId_whenGetProductById_thenThrowNotFoundException() {
+        // Arrange
         Long productId = 1L;
         when(productRepository.findById(productId)).thenReturn(Optional.empty());
 
+        // Act & Assert
         assertThrows(ResourceNotFoundException.class, () -> {
             productService.getProductById(productId);
         });
 
+        // Verify
         verify(productRepository).findById(productId);
     }
 
     @Test
-    public void createProduct_Success() {
+    public void givenValidRequest_whenCreateProduct_thenSaveAndReturnProduct() {
+        // Arrange
         ProductRequest request = new ProductRequest();
         request.setSku("SKU-123");
         request.setCategoryId(2L);
@@ -131,8 +138,10 @@ public class ProductServiceImplTest {
         when(productMapper.toResponse(savedProduct)).thenReturn(mockResponse);
         when(stockRepository.findByProductIdAndUserId(10L, mockUser.getId())).thenReturn(new ArrayList<>());
 
+        // Act
         ProductResponse result = productService.createProduct(request);
 
+        // Assert
         assertNotNull(result);
         assertEquals(10L, result.getId());
         verify(productRepository).save(any(Product.class));

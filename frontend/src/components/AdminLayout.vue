@@ -12,12 +12,15 @@
       <template v-slot:prepend>
         <v-list-item
           class="px-4 pt-4 pb-2"
-          :title="auth.userName"
+          :title="auth.companyName || auth.userName"
           :subtitle="auth.userEmail"
           lines="two"
         >
           <template v-slot:prepend>
-            <v-avatar color="primary" size="40" class="mr-3">
+            <v-avatar v-if="auth.companyLogo" size="40" class="mr-3" rounded="0">
+              <v-img :src="auth.companyLogo"></v-img>
+            </v-avatar>
+            <v-avatar v-else color="primary" size="40" class="mr-3">
               <span class="text-white font-weight-bold">{{ initials }}</span>
             </v-avatar>
           </template>
@@ -99,7 +102,7 @@ const rail = ref(false)
 const isDark = computed(() => theme.global.name.value === 'dark')
 
 const initials = computed(() => {
-  const name = auth.userName || 'A'
+  const name = auth.companyName || auth.userName || 'A'
   return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
 })
 

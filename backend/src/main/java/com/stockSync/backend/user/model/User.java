@@ -61,6 +61,12 @@ public class User  implements UserDetails {
     @Column(nullable = false)
     private boolean active = true;
 
+    @Column(name = "company_name", unique = true)
+    private String companyName;
+
+    @Column(name = "company_logo", columnDefinition = "TEXT")
+    private String companyLogo;
+
     @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

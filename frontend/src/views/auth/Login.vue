@@ -26,8 +26,10 @@
             <v-text-field
               v-model="password"
               label="Contraseña"
-              type="password"
+              :type="showPassword ? 'text' : 'password'"
               prepend-inner-icon="mdi-lock"
+              :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+              @click:append-inner="showPassword = !showPassword"
               :rules="[rules.required]"
               required
             />
@@ -85,7 +87,8 @@ const auth = useAuthStore()
 const form = ref(null) // Referencia para el formulario
 const email = ref('')
 const password = ref('')
-const rememberMe = ref(false)
+const showPassword = ref(false)
+const rememberMe = ref(true)
 const error = ref('')
 const loading = ref(false)
 

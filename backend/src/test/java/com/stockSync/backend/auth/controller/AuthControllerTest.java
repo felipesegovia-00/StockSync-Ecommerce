@@ -40,7 +40,8 @@ public class AuthControllerTest {
     }
 
     @Test
-    public void testLogin() throws Exception {
+    public void givenValidCredentials_whenLogin_thenReturnTokenAndUserInfo() throws Exception {
+        // Arrange
         LoginRequest request = LoginRequest.builder()
                 .email("test@test.com")
                 .password("password")
@@ -54,6 +55,7 @@ public class AuthControllerTest {
 
         when(authService.login(any(LoginRequest.class))).thenReturn(response);
 
+        // Act & Assert
         mockMvc.perform(post("/api/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
@@ -62,19 +64,23 @@ public class AuthControllerTest {
                 .andExpect(jsonPath("$.email").value("test@test.com"))
                 .andExpect(jsonPath("$.role").value("ADMIN"));
 
+        // Verify
         verify(authService).login(any(LoginRequest.class));
     }
 
     @Test
-    public void testRegister() throws Exception {
-        RegisterRequest request = new RegisterRequest("Test User", "test@test.com", "Password123!");
+    public void givenValidRequest_whenRegister_thenCreateUserAndReturnSuccess() throws Exception {
+        // Arrange
+        RegisterRequest request = new RegisterRequest("Test Company", "Test User", "test@test.com", "Password123!");
 
+        // Act & Assert
         mockMvc.perform(post("/api/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("Usuario registrado con éxito. Por favor, inicia sesión."));
 
+        // Verify
         verify(authService).register(any(RegisterRequest.class));
     }
 }

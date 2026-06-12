@@ -1,0 +1,2 @@
+ALTER TABLE users ADD COLUMN company_name VARCHAR(255) UNIQUE;
+ALTER TABLE users ADD COLUMN company_logo TEXT;
