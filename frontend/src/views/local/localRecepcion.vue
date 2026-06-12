@@ -11,7 +11,7 @@
           <v-card-text class="px-0 pb-0">
             <v-text-field
                 v-model="scannerSku"
-                label="Escanear o ingresar SKU"
+                label="Escanear o ingresar SKU de Envío (Ej: ENV-...)"
                 variant="outlined"
                 prepend-inner-icon="mdi-barcode-scan"
                 append-inner-icon="mdi-send"
@@ -50,7 +50,7 @@
           <v-card-text>
             <p><strong>Producto:</strong> {{ item.productName }}</p>
             <p><strong>Cantidad:</strong> {{ item.quantity }}</p>
-            <p><strong>SKU:</strong> {{ item.sku }}</p>
+            <p><strong>SKU de Envío:</strong> <v-chip size="small">{{ item.trackingSku }}</v-chip></p>
 
             <v-chip color="primary" class="mt-2">
               En Camino
@@ -138,7 +138,10 @@ const cameraError = ref('')
 
 function onDetect(detectedCodes) {
   if (detectedCodes && detectedCodes.length > 0) {
-    const code = detectedCodes[0].rawValue
+    const detected = detectedCodes[0]
+    const code = typeof detected === 'string' ? detected : (detected.rawValue || detected.content)
+    if (!code) return
+    
     scannerSku.value = code
     showCameraDialog.value = false
     procesarEscaneo()
@@ -175,7 +178,7 @@ async function procesarEscaneo() {
 async function confirmar(item) {
   loadingId.value = item.id
   try {
-    await store.receiveByScanner(item.sku, authStore.assignedWarehouseId)
+    await store.receiveByScanner(item.trackingSku, authStore.assignedWarehouseId)
     await store.fetchOutgoing(authStore.assignedWarehouseId)
   } catch (error) {
     console.error('Error al confirmar recepción', error)

@@ -28,18 +28,18 @@ export const useUsersStore = defineStore('users', () => {
 
   async function invite(email, role, assignedWarehouseId) {
     const { data } = await api.inviteUser(email, role, assignedWarehouseId)
-    await fetchAll()
+    await fetchInvited()
     return data
   }
 
   async function update(id, payload) {
     await api.updateUser(id, payload)
-    await fetchAll()
+    await fetchInvited()
   }
 
   async function remove(id) {
     await api.deleteUser(id)
-    await fetchAll()
+    await fetchInvited()
   }
 
   return { users, loading, fetchInvited, fetchAll, invite, update, remove }

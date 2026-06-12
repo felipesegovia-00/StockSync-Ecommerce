@@ -60,7 +60,7 @@ public class AuthService {
         var user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
-        var jwtToken = jwtService.generateToken(user, request.isRememberMe());
+        var jwtToken = jwtService.generateToken(user, Boolean.TRUE.equals(request.getRememberMe()));
 
         AuthResponse.WarehouseDto warehouseDto = null;
         if (user.getAssignedWarehouse() != null) {

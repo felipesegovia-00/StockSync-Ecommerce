@@ -58,15 +58,55 @@
 
               <div class="d-flex justify-end mt-4">
                 <v-btn
-                    color="primary"
-                    prepend-icon="mdi-send"
-                    @click="enviarSolicitud"
-                    :loading="enviando"
+                    color="secondary"
+                    variant="tonal"
+                    prepend-icon="mdi-cart-plus"
+                    @click="agregarAlCarrito"
                 >
-                  Enviar Solicitud
+                  Agregar a Canasta
                 </v-btn>
               </div>
             </v-form>
+
+            <v-divider class="my-6"></v-divider>
+
+            <h3 class="text-h6 mb-4">Canasta Actual</h3>
+            
+            <v-table v-if="carrito.length > 0">
+              <thead>
+                <tr>
+                  <th>Bodega</th>
+                  <th>Producto</th>
+                  <th>Cantidad</th>
+                  <th width="80"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(item, index) in carrito" :key="index">
+                  <td>{{ item.sourceWarehouseName }}</td>
+                  <td>{{ item.productName }}</td>
+                  <td>{{ item.quantity }}</td>
+                  <td>
+                    <v-btn icon="mdi-delete" color="error" variant="text" size="small" @click="eliminarDelCarrito(index)"></v-btn>
+                  </td>
+                </tr>
+              </tbody>
+            </v-table>
+            
+            <v-alert v-else type="info" variant="tonal" class="mb-4">
+              La canasta está vacía.
+            </v-alert>
+
+            <div class="d-flex justify-end mt-4" v-if="carrito.length > 0">
+              <v-btn
+                  color="primary"
+                  prepend-icon="mdi-send"
+                  @click="enviarSolicitudBatch"
+                  :loading="enviando"
+              >
+                Generar Solicitud
+              </v-btn>
+            </div>
           </v-card-text>
         </v-card>
       </v-col>
@@ -192,6 +232,8 @@ const formulario = ref({
   sourceWarehouseId: null
 })
 
+const carrito = ref([])
+
 const sourceWarehouseStock = ref([])
 
 const productosDisponibles = computed(() => {
@@ -265,7 +307,7 @@ const filteredSolicitudes = computed(() => {
   return result
 })
 
-async function enviarSolicitud() {
+async function agregarAlCarrito() {
   const { valid } = await formRef.value?.validate() || { valid: true }
   if (!valid) return
   
@@ -280,22 +322,48 @@ async function enviarSolicitud() {
     return
   }
 
+  const warehouse = bodegasDisponibles.value.find(w => w.id === formulario.value.sourceWarehouseId)
+
+  carrito.value.push({
+    productId: formulario.value.productId,
+    productName: selectedProduct.displayName.split(' (')[0],
+    quantity: formulario.value.quantity,
+    sourceWarehouseId: formulario.value.sourceWarehouseId,
+    sourceWarehouseName: warehouse ? warehouse.name : 'Bodega',
+    destinationWarehouseId: authStore.assignedWarehouseId
+  })
+
+  // Limpiar form
+  formulario.value.productId = null
+  formulario.value.quantity = null
+}
+
+function eliminarDelCarrito(index) {
+  carrito.value.splice(index, 1)
+}
+
+async function enviarSolicitudBatch() {
+  if (carrito.value.length === 0) return
+
   enviando.value = true
   try {
-    await requestsStore.create({
-      productId: formulario.value.productId,
-      quantity: formulario.value.quantity,
-      sourceWarehouseId: formulario.value.sourceWarehouseId,
-      destinationWarehouseId: authStore.assignedWarehouseId
-    })
-    formulario.value.productId = null
-    formulario.value.quantity = null
+    const payloads = carrito.value.map(item => ({
+      productId: item.productId,
+      quantity: item.quantity,
+      sourceWarehouseId: item.sourceWarehouseId,
+      destinationWarehouseId: item.destinationWarehouseId
+    }))
+
+    await requestsStore.createBatch(payloads)
+    
+    carrito.value = []
     formulario.value.sourceWarehouseId = null
     sourceWarehouseStock.value = []
     await requestsStore.fetchOutgoing(authStore.assignedWarehouseId)
+    alert('Solicitud enviada exitosamente')
   } catch (error) {
-    console.error('Error al enviar solicitud', error)
-    alert('Error al enviar solicitud')
+    console.error('Error al enviar solicitud batch', error)
+    alert('Error al enviar la solicitud')
   } finally {
     enviando.value = false
   }

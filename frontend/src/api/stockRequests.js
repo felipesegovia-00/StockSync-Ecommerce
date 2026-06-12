@@ -4,6 +4,10 @@ export function createStockRequest(data) {
   return client.post('/v1/stock-requests', data)
 }
 
+export function createStockRequestsBatch(dataArray) {
+  return client.post('/v1/stock-requests/batch', dataArray)
+}
+
 export function getAllRequests() {
   return client.get('/v1/stock-requests')
 }

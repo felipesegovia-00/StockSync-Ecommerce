@@ -37,6 +37,12 @@ public class StockRequest {
     @Column(nullable = false, length = 20)
     private String status; // PENDING, SHIPPED, RECEIVED, REJECTED
 
+    @Column(name = "tracking_sku", length = 50, unique = true)
+    private String trackingSku;
+
+    @Column(name = "request_group_code", length = 50)
+    private String requestGroupCode;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

@@ -356,7 +356,7 @@ async function handleDelete() {
 onMounted(async () => {
   loading.value = true
   try {
-    const [wRes] = await Promise.all([getWarehouses(), store.fetchAll()])
+    const [wRes] = await Promise.all([getWarehouses(), store.fetchInvited()])
     warehouses.value = wRes.data
   } finally {
     loading.value = false

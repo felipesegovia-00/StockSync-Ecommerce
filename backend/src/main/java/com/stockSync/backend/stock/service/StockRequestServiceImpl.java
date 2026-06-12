@@ -22,6 +22,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.ArrayList;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -64,6 +68,39 @@ public class StockRequestServiceImpl extends BaseService implements StockRequest
     }
 
     @Override
+    @Transactional
+    public List<StockRequestResponse> createRequestsBatch(List<StockRequestCreateDto> dtos) {
+        Map<Long, List<StockRequestCreateDto>> groupedBySource = dtos.stream()
+                .collect(Collectors.groupingBy(StockRequestCreateDto::getSourceWarehouseId));
+
+        List<StockRequestResponse> responses = new ArrayList<>();
+        for (Map.Entry<Long, List<StockRequestCreateDto>> entry : groupedBySource.entrySet()) {
+            String groupCode = "REQ-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+            for (StockRequestCreateDto dto : entry.getValue()) {
+                Warehouse sourceWh = warehouseRepository.findById(dto.getSourceWarehouseId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Warehouse", "id", dto.getSourceWarehouseId()));
+                Warehouse destWh = warehouseRepository.findById(dto.getDestinationWarehouseId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Warehouse", "id", dto.getDestinationWarehouseId()));
+                Product product = productRepository.findById(dto.getProductId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Product", "id", dto.getProductId()));
+
+                StockRequest request = StockRequest.builder()
+                        .product(product)
+                        .sourceWarehouse(sourceWh)
+                        .destinationWarehouse(destWh)
+                        .quantity(dto.getQuantity())
+                        .status("PENDIENTE")
+                        .requestGroupCode(groupCode)
+                        .build();
+
+                stockRequestRepository.save(request);
+                responses.add(stockRequestMapper.toResponse(request));
+            }
+        }
+        return responses;
+    }
+
+    @Override
     public List<StockRequestResponse> getRequestsByDestination(Long destinationId) {
         return stockRequestMapper.toResponseList(stockRequestRepository.findByDestinationWarehouseId(destinationId));
     }
@@ -85,12 +122,18 @@ public class StockRequestServiceImpl extends BaseService implements StockRequest
                 .orElseThrow(() -> new ResourceNotFoundException("StockRequest", "id", requestId));
         
         request.setStatus(status);
+        
+        if ("ENVIADO".equals(status) && request.getTrackingSku() == null) {
+            String tracking = "ENV-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+            request.setTrackingSku(tracking);
+        }
+        
         return stockRequestMapper.toResponse(stockRequestRepository.save(request));
     }
 
     @Override
     @Transactional
-    public StockRequestResponse receiveByScanner(String sku, Long destinationWarehouseId) {
+    public StockRequestResponse receiveByScanner(String trackingSku, Long destinationWarehouseId) {
         User currentUser = getTenantUser();
         
         if (currentUser.getAssignedWarehouse() != null && !currentUser.getAssignedWarehouse().getId().equals(destinationWarehouseId)) {
@@ -98,11 +141,11 @@ public class StockRequestServiceImpl extends BaseService implements StockRequest
         }
 
         // Buscar una solicitud en estado ENVIADO (SHIPPED)
-        List<StockRequest> requests = stockRequestRepository.findByProductSkuAndStatus(sku, "ENVIADO");
+        List<StockRequest> requests = stockRequestRepository.findByTrackingSkuAndStatus(trackingSku, "ENVIADO");
         StockRequest targetRequest = requests.stream()
                 .filter(r -> r.getDestinationWarehouse().getId().equals(destinationWarehouseId))
                 .findFirst()
-                .orElseThrow(() -> new BadRequestException("No hay envíos pendientes para el SKU " + sku + " en este local."));
+                .orElseThrow(() -> new BadRequestException("No hay envíos pendientes para el SKU " + trackingSku + " en este local."));
 
         // Procesar la recepción: cambiar a RECIBIDO y mover stock
         targetRequest.setStatus("RECIBIDO");

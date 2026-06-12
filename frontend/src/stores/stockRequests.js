@@ -32,6 +32,11 @@ export const useStockRequestsStore = defineStore('stockRequests', () => {
     return data
   }
 
+  async function createBatch(payloadArray) {
+    const { data } = await api.createStockRequestsBatch(payloadArray)
+    return data
+  }
+
   async function updateStatus(id, status) {
     const { data } = await api.updateRequestStatus(id, status)
     return data
@@ -49,6 +54,7 @@ export const useStockRequestsStore = defineStore('stockRequests', () => {
     fetchIncoming,
     fetchOutgoing,
     create,
+    createBatch,
     updateStatus,
     receiveByScanner
   }

@@ -10,5 +10,6 @@ public interface StockRequestService {
     List<StockRequestResponse> getRequestsBySource(Long sourceId);
     List<StockRequestResponse> getAllRequests();
     StockRequestResponse updateStatus(Long requestId, String status);
-    StockRequestResponse receiveByScanner(String sku, Long destinationWarehouseId);
+    StockRequestResponse receiveByScanner(String trackingSku, Long destinationWarehouseId);
+    List<StockRequestResponse> createRequestsBatch(List<StockRequestCreateDto> dtos);
 }

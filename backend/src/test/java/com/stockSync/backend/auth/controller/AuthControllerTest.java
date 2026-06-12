@@ -14,7 +14,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -42,7 +41,10 @@ public class AuthControllerTest {
 
     @Test
     public void testLogin() throws Exception {
-        LoginRequest request = new LoginRequest("test@test.com", "password");
+        LoginRequest request = LoginRequest.builder()
+                .email("test@test.com")
+                .password("password")
+                .build();
         AuthResponse response = AuthResponse.builder()
                 .token("mock-token")
                 .email("test@test.com")

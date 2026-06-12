@@ -22,6 +22,11 @@ public class StockRequestController {
         return ResponseEntity.ok(stockRequestService.createRequest(requestDto));
     }
 
+    @PostMapping("/batch")
+    public ResponseEntity<List<StockRequestResponse>> createRequestsBatch(@RequestBody List<StockRequestCreateDto> dtos) {
+        return ResponseEntity.ok(stockRequestService.createRequestsBatch(dtos));
+    }
+
     @GetMapping
     public ResponseEntity<List<StockRequestResponse>> getAllRequests() {
         return ResponseEntity.ok(stockRequestService.getAllRequests());

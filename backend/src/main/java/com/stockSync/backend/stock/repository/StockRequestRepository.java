@@ -13,4 +13,7 @@ public interface StockRequestRepository extends JpaRepository<StockRequest, Long
     
     // Find active requests by SKU
     List<StockRequest> findByProductSkuAndStatus(String sku, String status);
+    
+    // Find active requests by tracking SKU
+    List<StockRequest> findByTrackingSkuAndStatus(String trackingSku, String status);
 }
